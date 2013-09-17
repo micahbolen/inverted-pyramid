@@ -4,225 +4,260 @@
         <title>Inverted Pyramid</title>
     </head>
     <body>
-The <code>$scope.list</code> array below is just to confirm that we are on the same page with regard to the type of data structure that will ultimately be used to generate the chart/graph.  Use the radio buttons to test for now.
-<hr>
-<pre><code>
-    $scope.list =
-      [
-        {name:"LandingPage",hits:25000,convRate:"100%"},
-        {name:"Signup Page",hits:16500,convRate:"66%"}
-      ];
+        The <code>$scope.list</code> array below is just to confirm that we are on the same page with regard to the type of data structure that will ultimately be used to generate the chart/graph.  Use the radio buttons to test for now.
+        <hr>
+        <pre><code>
+$scope.list =
+[
+{name:"LandingPage",hits:25000,convRate:"100%"},
+{name:"Signup Page",hits:16500,convRate:"66%"}
+];
 </code></pre>
-<hr>
-<div ng-app ng-controller="ChartCtrl">
+        <hr>
+        <div ng-app ng-controller="ChartCtrl">
 
-        <label># of segments:</label><br/>
-        <input type="radio" ng-model="segments" ng-change="updateChart()" name="segments" checked="checked" value="1" /> 1 <input  ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="2" /> 2 <input type="radio"  ng-model="segments" ng-change="updateChart()" name="segments" value="3" /> 3 <input  ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="4" /> 4  <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="5" /> 5 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="6" /> 6  <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="7" /> 7 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="8" /> 8 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="9" /> 9 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="10" /> 10
-  <br/>
+            <label># of segments:</label><br/>
+            <input type="radio" ng-model="segments" ng-change="updateChart()" name="segments" checked="checked" value="1" /> 1 <input  ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="2" /> 2 <input type="radio"  ng-model="segments" ng-change="updateChart()" name="segments" value="3" /> 3 <input  ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="4" /> 4  <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="5" /> 5 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="6" /> 6  <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="7" /> 7 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="8" /> 8 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="9" /> 9 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="10" /> 10
+            <br/>
 
-    <canvas id="canvas" width="700" height="300"></canvas>
-</div>
-<hr>
-<div>
+            <canvas id="canvas" width="700" height="300"></canvas>
+        </div>
+        <hr>
+        <div>
 
-<img src="http://i.imgur.com/Yloixwyl.png" />
-</div>
+            <img src="http://i.imgur.com/Yloixwyl.png" />
+        </div>
         <script type="text/javascript" src="http://sole.github.io/tween.js/build/tween.min.js" ></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.5/angular.min.js"></script>
         <script type="text/javascript">
-function ChartCtrl($scope) {
+            function ChartCtrl($scope) {
 
-        $scope.segments = 1;
-
-
-    $scope.list =
-      [
-      {name:"LandingPage",hits:25000,convRate:"100%"},
-      {name:"Signup Page",hits:16500,convRate:"66%"}
-    ];
-
-          // $scope.segments = $scope.list.length;
-
-        var canvas = document.getElementById('canvas');
-        var w = canvas.width;
-        var h = canvas.height;
-        var ctx = canvas.getContext('2d');
-        var prevLines = [];
+                $scope.segments = 1;
 
 
-        function drawChart(segments) {
-            function drawPyramid() {
-          ctx.clearRect ( 0 , 0 , w , h );
+                $scope.list =
+                    [
+                    {name:"LandingPage",hits:25000,convRate:"100%"},
+                    {name:"Signup Page",hits:16500,convRate:"66%"}
+                ];
 
-          ctx.save();
+                // $scope.segments = $scope.list.length;
 
-          ctx.fillStyle = "rgb(34,139,34)";
-          ctx.beginPath();
-          ctx.moveTo(200, 0);
-          ctx.lineTo(w / 2, h );
-          ctx.lineTo(500, 0);
-          ctx.lineTo(0, 0);
-          ctx.fill();
-          ctx.closePath();
-          ctx.save();
-
-          if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
-
-          if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
-
-             ctx.lineWidth = 4;
-
-      // set line color
-      ctx.strokeStyle = '#ffffff';
-            ctx.beginPath();
-              ctx.moveTo(0, 2);
-              ctx.lineTo(w, 2);
-
-          ctx.stroke();
-          ctx.closePath();
-          ctx.save();
-
-          if ( ctx.setLineDash !== undefined )  ctx.setLineDash([4,6]);
-
-          if ( ctx.mozDash !== undefined ) ctx.mozDash = [4,6];
-
-            ctx.lineWidth = 1;
-
-      // set line color
-      ctx.strokeStyle = '#999';
-              ctx.beginPath();
-              ctx.moveTo(0, 2);
-              ctx.lineTo(w, 2);
-
-          ctx.stroke();
-          ctx.closePath();
-          ctx.save();
-            }
-            drawPyramid();
-
-          var lines = [];
-
-          switch (segments) {
-
-            case "1":
-              break;
-
-            case "2":
-              lines.push(50);
-              break;
-
-            case "3":
-              lines.push(50, 175);
-              break;
-
-            case "4":
-              lines.push(50, 133, 216);
-              break;
-
-            case "5":
-              lines.push(50, 112.5, 175, 237.5);
-              break;
-
-            case "6":
-              lines.push(50, 100, 150, 200, 250);
-              break;
-
-            case "7":
-              lines.push(50, 92, 134, 176, 218, 260);
-              break;
-
-            case "8":
-              lines.push(50, 86, 122, 158, 194, 230, 266);
-              break;
-
-            case "9":
-              lines.push(50, 81.25, 112.5, 143.75, 175, 206.25, 237.5, 268.75);
-              break;
-
-            case "10":
-              lines.push(50, 78, 106, 134, 162, 190, 218, 246, 274);
-              break;
-
-            default:
-              break;
-
-          }
+                var canvas = document.getElementById('canvas');
+                var w = canvas.width;
+                var h = canvas.height;
+                var ctx = canvas.getContext('2d');
+                var prevLines = [];
 
 
-          function drawLines(lines) {
+                function drawChart(segments) {
+                    function drawPyramid() {
+                        ctx.clearRect ( 0 , 0 , w , h );
 
-              var lineTween  = new TWEEN.Tween( { y: 0 } )
-              .to( lines, 2000 )
-            .easing( TWEEN.Easing.Elastic.InOut )
-            .onUpdate( function () {
-                 drawPyramid();
-                    function drawLine(y, i, a) {
-                  if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
+                        ctx.save();
 
-          if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
+                        ctx.fillStyle = "rgb(34,139,34)";
+                        ctx.beginPath();
+                        ctx.moveTo(200, 0);
+                        ctx.lineTo(w / 2, h );
+                        ctx.lineTo(500, 0);
+                        ctx.lineTo(0, 0);
+                        ctx.fill();
+                        ctx.closePath();
+                        ctx.save();
 
-             ctx.lineWidth = 4;
+                        if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
 
-      // set line color
-      ctx.strokeStyle = '#ffffff';
-            ctx.beginPath();
-              ctx.moveTo(0, this[i]);
-              ctx.lineTo(w, this[i]);
+                        if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
 
-          ctx.stroke();
-          ctx.closePath();
-          ctx.save();
+                        ctx.lineWidth = 4;
 
-            if ( ctx.setLineDash !== undefined )  ctx.setLineDash([4,6]);
+                        // set line color
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.beginPath();
+                        ctx.moveTo(0, 2);
+                        ctx.lineTo(w, 2);
 
-          if ( ctx.mozDash !== undefined ) ctx.mozDash = [4, 6];
+                        ctx.stroke();
+                        ctx.closePath();
+                        ctx.save();
 
-            ctx.lineWidth = 1;
+                        if ( ctx.setLineDash !== undefined )  ctx.setLineDash([4,6]);
 
-      // set line color
-      ctx.strokeStyle = '#999';
-              ctx.beginPath();
-              ctx.moveTo(0, this[i]);
-              ctx.lineTo(w, this[i]);
+                        if ( ctx.mozDash !== undefined ) ctx.mozDash = [4,6];
 
-          ctx.stroke();
-          ctx.closePath();
-          ctx.save();
+                        ctx.lineWidth = 1;
+
+                        // set line color
+                        ctx.strokeStyle = '#999';
+                        ctx.beginPath();
+                        ctx.moveTo(0, 2);
+                        ctx.lineTo(w, 2);
+
+                        ctx.stroke();
+                        ctx.closePath();
+                        ctx.save();
                     }
-                lines.forEach(drawLine, this);
-            } )
-            .start();
+                    drawPyramid();
+
+                    var lines = [];
+
+                    switch (segments) {
+
+                        case "1":
+                            break;
+
+                        case "2":
+                            lines.push(50);
+                            break;
+
+                        case "3":
+                            lines.push(50, 175);
+                            break;
+
+                        case "4":
+                            lines.push(50, 133, 216);
+                            break;
+
+                        case "5":
+                            lines.push(50, 112.5, 175, 237.5);
+                            break;
+
+                        case "6":
+                            lines.push(50, 100, 150, 200, 250);
+                            break;
+
+                        case "7":
+                            lines.push(50, 92, 134, 176, 218, 260);
+                            break;
+
+                        case "8":
+                            lines.push(50, 86, 122, 158, 194, 230, 266);
+                            break;
+
+                        case "9":
+                            lines.push(50, 81.25, 112.5, 143.75, 175, 206.25, 237.5, 268.75);
+                            break;
+
+                        case "10":
+                            lines.push(50, 78, 106, 134, 162, 190, 218, 246, 274);
+                            break;
+
+                        default:
+                            break;
+
+                    }
 
 
-            //todo: animate lines from prevLines to lines
+                    function drawLines(lines) {
+
+                        var lineTween  = new TWEEN.Tween( { y: 0 } )
+                        .to( lines, 2000 )
+                        .easing( TWEEN.Easing.Elastic.InOut )
+                        .onUpdate( function () {
+                            drawPyramid();
+                            function drawLine(y, i, a) {
+                                if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
+
+                                if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
+
+                                ctx.lineWidth = 4;
+
+                                // set line color
+                                ctx.strokeStyle = '#ffffff';
+                                ctx.beginPath();
+                                ctx.moveTo(0, this[i]);
+                                ctx.lineTo(w, this[i]);
+
+                                ctx.stroke();
+                                ctx.closePath();
+                                ctx.save();
+
+
+                                if ( ctx.setLineDash !== undefined )  ctx.setLineDash([4,6]);
+
+                                if ( ctx.mozDash !== undefined ) ctx.mozDash = [4, 6];
+
+                                ctx.lineWidth = 1;
+
+                                // set line color
+                                ctx.strokeStyle = '#999';
+                                ctx.beginPath();
+                                ctx.moveTo(0, this[i]);
+                                ctx.lineTo(w, this[i]);
+
+                                ctx.stroke();
+                                ctx.closePath();
+                                ctx.save();
+                            }
+                            lines.forEach(drawLine, this);
+                        } )
+                        .onComplete(function() {
+                               function drawSections(y, i, a) {
+                            if (i > 0) {
+                                if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
+
+                                if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
+
+                                ctx.lineWidth = 4;
+
+                                // set line color
+//                                 ctx.strokeStyle = '#000';
+//                                 ctx.beginPath();
+
+//                                 var paddingX = Math.tan(60) * 50;
+
+//                                 sin(theta) = 0.5;
+
+//                                 theta = sin^-1(0.5);
+
+//                                 var x = Math.tan(60) * (y - (lines[i-1]));
+
+//                                 ctx.moveTo(200 + paddingX, lines[i-1]);
+
+//                                 ctx.lineTo(200 + paddingX + x, y);
+
+//                                 ctx.stroke();
+//                                 ctx.closePath();
+//                                 ctx.save();
+                            }
+                        }
+
+                        lines.forEach(drawSections);
+                        })
+                        .start();
 
 
 
-          }
+                        //todo: animate lines from prevLines to lines (maybe)
 
 
-          drawLines(lines);
-          prevLines = lines;
+
+                    }
 
 
-        }
-
-    function animate() {
-
-
-       requestAnimationFrame(animate);
-        TWEEN.update();
-    }
-
-        $scope.updateChart = function() {
-          drawChart($scope.segments);
-        };
-
-    drawChart(1);
-    animate();
+                    drawLines(lines);
+                    prevLines = lines;
 
 
-}
-    </script>
-</body>
+                }
+
+                function animate() {
+
+
+                    requestAnimationFrame(animate);
+                    TWEEN.update();
+                }
+
+                $scope.updateChart = function() {
+                    drawChart($scope.segments);
+                };
+
+                drawChart(1);
+                animate();
+
+
+            }
+        </script>
+    </body>
 </html>
