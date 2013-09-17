@@ -191,39 +191,72 @@ $scope.list =
                                 ctx.save();
                             }
                             lines.forEach(drawLine, this);
-                        } )
-                        .onComplete(function() {
+                            //   } )
+                            //   .onComplete(function() {
+
                                function drawSections(y, i, a) {
                             if (i > 0) {
-                                if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
 
-                                if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
-
-                                ctx.lineWidth = 4;
 
                                 // set line color
-//                                 ctx.strokeStyle = '#000';
-//                                 ctx.beginPath();
+                                ctx.fillStyle = '#00'+i;
 
-//                                 var paddingX = Math.tan(60) * 50;
+                                ctx.beginPath();
 
-//                                 sin(theta) = 0.5;
+                                // http://stackoverflow.com/questions/18855315/how-can-i-solve-for-the-points-of-an-arbitrary-trapezoid-inscribed-inside-of-a-t
 
-//                                 theta = sin^-1(0.5);
+                                var x = 350 - (((350 - 200) * (300 - this[i-1])) / (300 - 0));
 
-//                                 var x = Math.tan(60) * (y - (lines[i-1]));
+                                ctx.moveTo(x, this[i-1]+2);
 
-//                                 ctx.moveTo(200 + paddingX, lines[i-1]);
+                                var x2 = 350 - (((350 - 200) * (300 - this[i])) / (300 - 0));
 
-//                                 ctx.lineTo(200 + paddingX + x, y);
+                                ctx.lineTo(x2, this[i]-2);
 
-//                                 ctx.stroke();
-//                                 ctx.closePath();
-//                                 ctx.save();
+                                var x3 = 350 +(((500 - 350)*(300 - this[i])) / (300 - 0));
+
+                                ctx.lineTo(x3, this[i]-2);
+
+                                var x4 = 350 +(((500 - 350)*(300 - this[i-1])) / (300 - 0));
+                                ctx.lineTo(x4, this[i-1]+2);
+
+                                ctx.closePath();
+                                ctx.fill();
+                                ctx.save();
                             }
+
+
+
                         }
 
-                        lines.forEach(drawSections);
+                        lines.forEach(drawSections, this);
+
+                                // draw the triangle at the top
+                              var i = lines.length - 1;
+
+                               ctx.fillStyle = '#00'+i;
+
+                                ctx.beginPath();
+
+                                // http://stackoverflow.com/questions/18855315/how-can-i-solve-for-the-points-of-an-arbitrary-trapezoid-inscribed-inside-of-a-t
+
+
+                                var x = 350 - (((350 - 200) * (300 - this[i])) / (300 - 0));
+
+                                ctx.moveTo(x, this[i]+2);
+
+                                var x2 = 350 - (((350 - 200) * (300 - 300)) / (300 - 0));
+
+                                ctx.lineTo(x2, 300);
+
+                                var x3 = 350 +(((500 - 350)*(300 - this[i])) / (300 - 0));
+
+                                ctx.lineTo(x3, this[i]+2);
+
+                                ctx.closePath();
+                                ctx.fill();
+                                ctx.save();
+
                         })
                         .start();
 
