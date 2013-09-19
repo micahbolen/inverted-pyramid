@@ -1,24 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
     <head>
         <title>Inverted Pyramid</title>
     </head>
     <body>
-        The <code>$scope.list</code> array below is just to confirm that we are on the same page with regard to the type of data structure that will ultimately be used to generate the chart/graph.  Use the radio buttons to test for now.
-        <hr>
-        <pre><code>
-$scope.list =
-[
-{name:"LandingPage",hits:25000,convRate:"100%"},
-{name:"Signup Page",hits:16500,convRate:"66%"}
-];
-</code></pre>
-        <hr>
-        <div ng-app ng-controller="ChartCtrl">
 
-            <label># of segments:</label><br/>
-            <input type="radio" ng-model="segments" ng-change="updateChart()" name="segments" checked="checked" value="1" /> 1 <input  ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="2" /> 2 <input type="radio"  ng-model="segments" ng-change="updateChart()" name="segments" value="3" /> 3 <input  ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="4" /> 4  <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="5" /> 5 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="6" /> 6  <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="7" /> 7 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="8" /> 8 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="9" /> 9 <input ng-model="segments" ng-change="updateChart()" type="radio" name="segments" value="10" /> 10
-            <br/>
+        <div ng-controller="ChartCtrl">
 
             <canvas id="canvas" width="700" height="300"></canvas>
         </div>
@@ -27,253 +14,170 @@ $scope.list =
 
             <img src="http://i.imgur.com/Yloixwyl.png" />
         </div>
-        <script type="text/javascript" src="http://sole.github.io/tween.js/build/tween.min.js" ></script>
+        <script type="text/javascript" src="scripts/tween.min.js" ></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.5/angular.min.js"></script>
         <script type="text/javascript">
             function ChartCtrl($scope) {
 
-                $scope.segments = 1;
-
-
+                // todo: add 5 segments
                 $scope.list =
                     [
-                    {name:"LandingPage",hits:25000,convRate:"100%"},
-                    {name:"Signup Page",hits:16500,convRate:"66%"}
-                ];
+                    {name:"LandingPage",hits:25000,convRate:"100%", color:"rgb(119,107,188)"},
+                    {name:"Signup Page",hits:16500,convRate:"66%", color:"rgb(0,116,140)"},
+                    {name:"New Account", hits:12000, convRate:"48%", color:"rgb(0,199,211)"},
+                    {name:"Subscription", hits:8000, convRate:"32%", color:"rgb(0,176,129)"},
+                    {name:"New Account", hits:3500,convRate:"14%", color:"rgb(0,123,0)"},
 
-                // $scope.segments = $scope.list.length;
+                ];
 
                 var canvas = document.getElementById('canvas');
                 var w = canvas.width;
                 var h = canvas.height;
                 var ctx = canvas.getContext('2d');
-                var prevLines = [];
 
 
-                function drawChart(segments) {
-                    function drawPyramid() {
-                        ctx.clearRect ( 0 , 0 , w , h );
+                $scope.updateChart = function() {
 
-                        ctx.save();
+                var lines = [];
 
-                        ctx.fillStyle = "rgb(34,139,34)";
-                        ctx.beginPath();
-                        ctx.moveTo(200, 0);
-                        ctx.lineTo(w / 2, h );
-                        ctx.lineTo(500, 0);
-                        ctx.lineTo(0, 0);
-                        ctx.fill();
-                        ctx.closePath();
-                        ctx.save();
+
+                function plotLine(section, i, array) {
+                    var y; // draw the divider line and start the trapezoid at this y position
+
+
+                    if (i < ( $scope.list.length - 1)) {
+                        y = i * (250 / ( $scope.list.length - 1));
+                        if(y == 0) y = 2;
+
+                    } else {
+                        y = 250;
+
+                    }
+                   lines.push(y);
+
+                }
+                    $scope.list.forEach(plotLine, this);
+
+                    var lineTween = new TWEEN.Tween( { y: 0 } )
+                    .to( lines, 2000 )
+                    .easing( TWEEN.Easing.Elastic.Out )
+                    .onUpdate( function () {
+                         ctx.clearRect ( 0 , 0 , w , h );
+                        function drawLine(section, i, array) {
 
                         if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
 
                         if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
-
+                        console.log(this);
                         ctx.lineWidth = 4;
 
                         // set line color
                         ctx.strokeStyle = '#ffffff';
                         ctx.beginPath();
-                        ctx.moveTo(0, 2);
-                        ctx.lineTo(w, 2);
+                        ctx.moveTo(0, this[i]);
+                        ctx.lineTo(w, this[i]);
 
                         ctx.stroke();
                         ctx.closePath();
                         ctx.save();
 
+
                         if ( ctx.setLineDash !== undefined )  ctx.setLineDash([4,6]);
 
-                        if ( ctx.mozDash !== undefined ) ctx.mozDash = [4,6];
+                        if ( ctx.mozDash !== undefined ) ctx.mozDash = [4, 6];
 
-                        ctx.lineWidth = 1;
+                        ctx.lineWidth = 2;
 
                         // set line color
                         ctx.strokeStyle = '#999';
                         ctx.beginPath();
-                        ctx.moveTo(0, 2);
-                        ctx.lineTo(w, 2);
+                        ctx.moveTo(0, this[i]);
+                        ctx.lineTo(w, this[i]);
 
                         ctx.stroke();
                         ctx.closePath();
                         ctx.save();
                     }
-                    drawPyramid();
 
-                    var lines = [];
 
-                    switch (segments) {
 
-                        case "1":
-                            break;
+                        function drawSections(section, i, a) {
+                    if (i < $scope.list.length - 1) {
 
-                        case "2":
-                            lines.push(50);
-                            break;
 
-                        case "3":
-                            lines.push(50, 175);
-                            break;
+                        // set line color
+                        ctx.fillStyle = $scope.list[i].color;
 
-                        case "4":
-                            lines.push(50, 133, 216);
-                            break;
+                        ctx.beginPath();
 
-                        case "5":
-                            lines.push(50, 112.5, 175, 237.5);
-                            break;
+                        // http://stackoverflow.com/questions/18855315/how-can-i-solve-for-the-points-of-an-arbitrary-trapezoid-inscribed-inside-of-a-t
 
-                        case "6":
-                            lines.push(50, 100, 150, 200, 250);
-                            break;
+                        var x = 350 - (((350 - 200) * (300 - this[i])) / (300 - 0));
 
-                        case "7":
-                            lines.push(50, 92, 134, 176, 218, 260);
-                            break;
+                        ctx.moveTo(x, this[i]);
 
-                        case "8":
-                            lines.push(50, 86, 122, 158, 194, 230, 266);
-                            break;
+                        var x2 = 350 - (((350 - 200) * (300 - this[i+1])) / (300 - 0));
 
-                        case "9":
-                            lines.push(50, 81.25, 112.5, 143.75, 175, 206.25, 237.5, 268.75);
-                            break;
+                        ctx.lineTo(x2, this[i+1]);
 
-                        case "10":
-                            lines.push(50, 78, 106, 134, 162, 190, 218, 246, 274);
-                            break;
+                        var x3 = 350 +(((500 - 350)*(300 - this[i+1])) / (300 - 0));
 
-                        default:
-                            break;
+                        ctx.lineTo(x3, this[i+1]);
 
+                        var x4 = 350 +(((500 - 350)*(300 - this[i])) / (300 - 0));
+                        ctx.lineTo(x4, this[i]);
+
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.save();
+                    } else {
+
+                        // set line color
+                        ctx.fillStyle = $scope.list[i].color;
+
+                        ctx.beginPath();
+
+                        // http://stackoverflow.com/questions/18855315/how-can-i-solve-for-the-points-of-an-arbitrary-trapezoid-inscribed-inside-of-a-t
+
+                        var x = 350 - (((350 - 200) * (300 - this[i])) / (300 - 0));
+
+                        ctx.moveTo(x, this[i]);
+
+                        var x2 = 350;
+
+                        ctx.lineTo(x2, 300);
+
+
+
+                        var x3 = 350 +(((500 - 350)*(300 - this[i])) / (300 - 0));
+                        ctx.lineTo(x3, this[i]);
+
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.save();
                     }
-
-
-                    function drawLines(lines) {
-
-                        var lineTween  = new TWEEN.Tween( { y: 0 } )
-                        .to( lines, 2000 )
-                        .easing( TWEEN.Easing.Elastic.InOut )
-                        .onUpdate( function () {
-                            drawPyramid();
-                            function drawLine(y, i, a) {
-                                if ( ctx.setLineDash !== undefined )  ctx.setLineDash([0]);
-
-                                if ( ctx.mozDash !== undefined ) ctx.mozDash = [];
-
-                                ctx.lineWidth = 4;
-
-                                // set line color
-                                ctx.strokeStyle = '#ffffff';
-                                ctx.beginPath();
-                                ctx.moveTo(0, this[i]);
-                                ctx.lineTo(w, this[i]);
-
-                                ctx.stroke();
-                                ctx.closePath();
-                                ctx.save();
-
-
-                                if ( ctx.setLineDash !== undefined )  ctx.setLineDash([4,6]);
-
-                                if ( ctx.mozDash !== undefined ) ctx.mozDash = [4, 6];
-
-                                ctx.lineWidth = 1;
-
-                                // set line color
-                                ctx.strokeStyle = '#999';
-                                ctx.beginPath();
-                                ctx.moveTo(0, this[i]);
-                                ctx.lineTo(w, this[i]);
-
-                                ctx.stroke();
-                                ctx.closePath();
-                                ctx.save();
-                            }
-                            lines.forEach(drawLine, this);
-                            //   } )
-                            //   .onComplete(function() {
-
-                               function drawSections(y, i, a) {
-                            if (i > 0) {
-
-
-                                // set line color
-                                ctx.fillStyle = '#00'+i;
-
-                                ctx.beginPath();
-
-                                // http://stackoverflow.com/questions/18855315/how-can-i-solve-for-the-points-of-an-arbitrary-trapezoid-inscribed-inside-of-a-t
-
-                                var x = 350 - (((350 - 200) * (300 - this[i-1])) / (300 - 0));
-
-                                ctx.moveTo(x, this[i-1]+2);
-
-                                var x2 = 350 - (((350 - 200) * (300 - this[i])) / (300 - 0));
-
-                                ctx.lineTo(x2, this[i]-2);
-
-                                var x3 = 350 +(((500 - 350)*(300 - this[i])) / (300 - 0));
-
-                                ctx.lineTo(x3, this[i]-2);
-
-                                var x4 = 350 +(((500 - 350)*(300 - this[i-1])) / (300 - 0));
-                                ctx.lineTo(x4, this[i-1]+2);
-
-                                ctx.closePath();
-                                ctx.fill();
-                                ctx.save();
-                            }
-
-
-
-                        }
-
-                        lines.forEach(drawSections, this);
-
-                                // draw the triangle at the top
-                              var i = lines.length - 1;
-
-                               ctx.fillStyle = '#00'+i;
-
-                                ctx.beginPath();
-
-                                // http://stackoverflow.com/questions/18855315/how-can-i-solve-for-the-points-of-an-arbitrary-trapezoid-inscribed-inside-of-a-t
-
-
-                                var x = 350 - (((350 - 200) * (300 - this[i])) / (300 - 0));
-
-                                ctx.moveTo(x, this[i]+2);
-
-                                var x2 = 350 - (((350 - 200) * (300 - 300)) / (300 - 0));
-
-                                ctx.lineTo(x2, 300);
-
-                                var x3 = 350 +(((500 - 350)*(300 - this[i])) / (300 - 0));
-
-                                ctx.lineTo(x3, this[i]+2);
-
-                                ctx.closePath();
-                                ctx.fill();
-                                ctx.save();
-
-                        })
-                        .start();
-
-
-
-                        //todo: animate lines from prevLines to lines (maybe)
-
-
-
-                    }
-
-
-                    drawLines(lines);
-                    prevLines = lines;
-
 
                 }
+
+
+
+                $scope.list.forEach(drawSections, this);
+                        $scope.list.forEach(drawLine, this);
+
+                    })
+                    .onComplete( function() {
+                       function drawLabels(section, i, a) {
+                    // Left labels start at x = 2, y = y1 + 2.
+
+                    // Right labels start at x = 298 - text length, y1 + 2.
+                    // Fade all the labels in at the same time.
+                }
+
+                $scope.list.forEach(drawLabels, this);
+                    })
+                    .start();
+
+            };
 
                 function animate() {
 
@@ -282,11 +186,8 @@ $scope.list =
                     TWEEN.update();
                 }
 
-                $scope.updateChart = function() {
-                    drawChart($scope.segments);
-                };
 
-                drawChart(1);
+                $scope.updateChart();
                 animate();
 
 
